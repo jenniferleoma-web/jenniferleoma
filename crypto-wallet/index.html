@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BitPay - Crypto Wallet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563EB">
+</head>
+<body class="light-theme">
+  <!-- APK Download Banner -->
+  <div class="apk-banner" id="apk-banner">
+    <div class="apk-banner-inner">
+      <div class="apk-banner-left">
+        <div class="apk-banner-logo">
+          <svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#2563EB"/><text x="16" y="22" font-size="18" font-weight="bold" fill="white" text-anchor="middle" font-family="Inter,sans-serif">B</text></svg>
+        </div>
+        <div>
+          <strong>Get Bit Pay app</strong>
+          <span>Download for Android</span>
+        </div>
+      </div>
+      <a href="#" class="apk-download-btn" id="apk-download-btn">Download APK</a>
+      <button class="apk-banner-close" id="apk-banner-close" aria-label="Close">×</button>
+    </div>
+  </div>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo">
+          <div class="logo-icon bitpay-logo">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="32" height="32" rx="8" fill="#FFFFFF"/>
+              <rect width="32" height="32" rx="8" stroke="#2563EB" stroke-width="2" fill="none"/>
+              <text x="16" y="22" font-size="16" font-weight="bold" fill="#2563EB" text-anchor="middle" font-family="Inter,Arial,sans-serif">B</text>
+            </svg>
+          </div>
+          <span class="logo-text">BitPay</span>
+        </div>
+        <div class="header-actions">
+          <div class="network-badge">
+            <span class="network-dot"></span>
+            <span>Mainnet</span>
+          </div>
+          <div class="wallet-address">
+            <span class="address-text">0x742d...8f3a</span>
+            <button class="copy-btn" aria-label="Copy address">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+          </div>
+          <div class="header-menu-wrap">
+            <button class="menu-btn" id="header-menu-btn" aria-label="Menu" aria-expanded="false">
+              <span></span><span></span><span></span>
+            </button>
+            <div class="header-menu-dropdown" id="header-menu-dropdown" aria-hidden="true">
+              <a href="#" class="menu-item" data-action="connected">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Connected sites
+              </a>
+              <a href="#" class="menu-item" data-action="add-network">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                Add Network
+              </a>
+              <a href="#" class="menu-item" data-action="lock">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Lock Wallet
+              </a>
+              <a href="#" class="menu-item" data-action="settings">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                Settings
+              </a>
+              <a href="#" class="menu-item" data-action="help">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Help & Support
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content - Tab Panes -->
+    <main class="main">
+      <!-- Home Tab -->
+      <div class="tab-pane active" id="tab-home">
+      <!-- Balance Card -->
+      <section class="balance-section">
+        <div class="balance-card">
+          <div class="balance-label">Total Balance</div>
+          <div class="balance-row">
+            <div class="balance-amount">$890,000.00</div>
+            <button class="btn btn-purchase-inline" id="purchase-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              Purchase
+            </button>
+          </div>
+          <div class="balance-change positive">+12.4% this month</div>
+          <div class="balance-actions">
+            <button class="btn btn-primary" id="send-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+              Send
+            </button>
+            <button class="btn btn-secondary" id="receive-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Receive
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Blockchain Assets - List format like web3 wallets -->
+      <section class="assets-section">
+        <h2 class="section-title">Your Assets</h2>
+        <div class="assets-list">
+          <article class="asset-row" data-chain="usdt-erc20" data-asset="usdt" id="usdt-asset-row">
+            <div class="asset-left">
+              <img class="asset-logo" src="https://assets.coingecko.com/coins/images/325/small/Tether.png" alt="USDT" loading="lazy">
+              <div class="asset-info">
+                <span class="asset-name">USDT</span>
+                <span class="asset-chain">ERC-20 · Ethereum</span>
+              </div>
+            </div>
+            <div class="asset-right">
+              <span class="asset-balance">$890,000.00</span>
+              <span class="asset-equivalent">890,000 USDT</span>
+            </div>
+            <span class="asset-chevron">›</span>
+          </article>
+          <article class="asset-row" data-chain="eth">
+            <div class="asset-left">
+              <img class="asset-logo" src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH" loading="lazy">
+              <div class="asset-info">
+                <span class="asset-name">Ethereum</span>
+                <span class="asset-chain">ETH</span>
+              </div>
+            </div>
+            <div class="asset-right">
+              <span class="asset-balance">$0.00</span>
+              <span class="asset-equivalent">0 ETH</span>
+            </div>
+            <span class="asset-chevron">›</span>
+          </article>
+          <article class="asset-row" data-chain="btc">
+            <div class="asset-left">
+              <img class="asset-logo" src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" alt="BTC" loading="lazy">
+              <div class="asset-info">
+                <span class="asset-name">Bitcoin</span>
+                <span class="asset-chain">BTC</span>
+              </div>
+            </div>
+            <div class="asset-right">
+              <span class="asset-balance">$0.00</span>
+              <span class="asset-equivalent">0 BTC</span>
+            </div>
+            <span class="asset-chevron">›</span>
+          </article>
+          <article class="asset-row" data-chain="sol">
+            <div class="asset-left">
+              <img class="asset-logo" src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL" loading="lazy">
+              <div class="asset-info">
+                <span class="asset-name">Solana</span>
+                <span class="asset-chain">SOL</span>
+              </div>
+            </div>
+            <div class="asset-right">
+              <span class="asset-balance">$0.00</span>
+              <span class="asset-equivalent">0 SOL</span>
+            </div>
+            <span class="asset-chevron">›</span>
+          </article>
+          <article class="asset-row" data-chain="bnb">
+            <div class="asset-left">
+              <img class="asset-logo" src="https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" alt="BNB" loading="lazy">
+              <div class="asset-info">
+                <span class="asset-name">BNB Chain</span>
+                <span class="asset-chain">BNB</span>
+              </div>
+            </div>
+            <div class="asset-right">
+              <span class="asset-balance">$0.00</span>
+              <span class="asset-equivalent">0 BNB</span>
+            </div>
+            <span class="asset-chevron">›</span>
+          </article>
+        </div>
+      </section>
+
+      <!-- Recent Transactions -->
+      <section class="transactions-section">
+        <div class="section-header">
+          <h2 class="section-title">Recent Activity</h2>
+          <button class="link-btn" id="view-all-activity">View All</button>
+        </div>
+        <div class="transactions-list">
+          <div class="transaction-item">
+            <div class="tx-icon received">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+            </div>
+            <div class="tx-details">
+              <span class="tx-title">Received USDT (ERC-20)</span>
+              <span class="tx-date">Today, 2:34 PM</span>
+            </div>
+            <div class="tx-amount positive">+$890,000</div>
+          </div>
+        </div>
+      </section>
+      </div>
+
+      <!-- Assets Tab -->
+      <div class="tab-pane" id="tab-assets">
+        <section class="balance-section">
+          <div class="balance-card compact">
+            <div class="balance-label">Portfolio Value</div>
+            <div class="balance-amount">$890,000.00</div>
+            <div class="balance-change positive">+12.4% this month</div>
+          </div>
+        </section>
+        <section class="assets-section">
+          <h2 class="section-title">All Assets</h2>
+          <div class="assets-list" id="assets-tab-list">
+            <article class="asset-row" data-chain="usdt-erc20" data-asset="usdt">
+              <div class="asset-left">
+                <img class="asset-logo" src="https://assets.coingecko.com/coins/images/325/small/Tether.png" alt="USDT">
+                <div class="asset-info">
+                  <span class="asset-name">USDT</span>
+                  <span class="asset-chain">ERC-20 · Ethereum</span>
+                </div>
+              </div>
+              <div class="asset-right">
+                <span class="asset-balance">$890,000.00</span>
+                <span class="asset-equivalent">890,000 USDT</span>
+              </div>
+              <span class="asset-chevron">›</span>
+            </article>
+            <article class="asset-row" data-chain="eth">
+              <div class="asset-left">
+                <img class="asset-logo" src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH">
+                <div class="asset-info">
+                  <span class="asset-name">Ethereum</span>
+                  <span class="asset-chain">ETH</span>
+                </div>
+              </div>
+              <div class="asset-right">
+                <span class="asset-balance">$0.00</span>
+                <span class="asset-equivalent">0 ETH</span>
+              </div>
+              <span class="asset-chevron">›</span>
+            </article>
+            <article class="asset-row" data-chain="btc">
+              <div class="asset-left">
+                <img class="asset-logo" src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" alt="BTC">
+                <div class="asset-info">
+                  <span class="asset-name">Bitcoin</span>
+                  <span class="asset-chain">BTC</span>
+                </div>
+              </div>
+              <div class="asset-right">
+                <span class="asset-balance">$0.00</span>
+                <span class="asset-equivalent">0 BTC</span>
+              </div>
+              <span class="asset-chevron">›</span>
+            </article>
+            <article class="asset-row" data-chain="sol">
+              <div class="asset-left">
+                <img class="asset-logo" src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL">
+                <div class="asset-info">
+                  <span class="asset-name">Solana</span>
+                  <span class="asset-chain">SOL</span>
+                </div>
+              </div>
+              <div class="asset-right">
+                <span class="asset-balance">$0.00</span>
+                <span class="asset-equivalent">0 SOL</span>
+              </div>
+              <span class="asset-chevron">›</span>
+            </article>
+            <article class="asset-row" data-chain="bnb">
+              <div class="asset-left">
+                <img class="asset-logo" src="https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" alt="BNB">
+                <div class="asset-info">
+                  <span class="asset-name">BNB Chain</span>
+                  <span class="asset-chain">BNB</span>
+                </div>
+              </div>
+              <div class="asset-right">
+                <span class="asset-balance">$0.00</span>
+                <span class="asset-equivalent">0 BNB</span>
+              </div>
+              <span class="asset-chevron">›</span>
+            </article>
+          </div>
+        </section>
+      </div>
+
+      <!-- Activity Tab -->
+      <div class="tab-pane" id="tab-activity">
+        <section class="activity-section">
+          <h2 class="section-title">Transaction History</h2>
+          <div class="activity-filters">
+            <button class="filter-btn active">All</button>
+            <button class="filter-btn">Sent</button>
+            <button class="filter-btn">Received</button>
+          </div>
+          <div class="transactions-list">
+            <div class="transaction-item">
+              <div class="tx-icon received">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+              </div>
+              <div class="tx-details">
+                <span class="tx-title">Received USDT (ERC-20)</span>
+                <span class="tx-date">Today, 2:34 PM</span>
+              </div>
+              <div class="tx-amount positive">+$890,000</div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Settings Tab -->
+      <div class="tab-pane" id="tab-settings">
+        <section class="settings-section">
+          <h2 class="section-title">Preferences</h2>
+          <div class="settings-list">
+            <div class="settings-row">
+              <span class="settings-label">Appearance</span>
+              <div class="settings-value">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="dark-mode-toggle" aria-label="Dark mode">
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label" id="theme-label">Light mode</span>
+              </div>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">Currency</span>
+              <span class="settings-value-text">USD</span>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">Default Network</span>
+              <span class="settings-value-text">All Networks</span>
+            </div>
+          </div>
+          <h2 class="section-title">Security</h2>
+          <div class="settings-list">
+            <div class="settings-row clickable">
+              <span class="settings-label">Change Password</span>
+              <span class="settings-chevron">›</span>
+            </div>
+            <div class="settings-row clickable">
+              <span class="settings-label">Account ID</span>
+              <span class="settings-value-text">2d8f40b</span>
+            </div>
+          </div>
+          <h2 class="section-title">About</h2>
+          <div class="settings-list">
+            <div class="settings-row">
+              <span class="settings-label">Version</span>
+              <span class="settings-value-text">1.0.0</span>
+            </div>
+            <div class="settings-row clickable">
+              <span class="settings-label">Privacy Policy</span>
+              <span class="settings-chevron">›</span>
+            </div>
+            <div class="settings-row clickable">
+              <span class="settings-label">Terms of Service</span>
+              <span class="settings-chevron">›</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Mobile Bottom Nav -->
+    <nav class="bottom-nav">
+      <a href="#" class="nav-item active" data-tab="tab-home">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Home</span>
+      </a>
+      <a href="#" class="nav-item" data-tab="tab-assets">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span>Assets</span>
+      </a>
+      <a href="#" class="nav-item center" id="nav-send-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        <span>Send</span>
+      </a>
+      <a href="#" class="nav-item" data-tab="tab-activity">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Activity</span>
+      </a>
+      <a href="#" class="nav-item" data-tab="tab-settings">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Settings</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Send - Full-page popup with blockchain selection -->
+  <div class="fullpage-popup-overlay" id="send-popup" aria-hidden="true">
+    <div class="fullpage-popup">
+      <div class="fullpage-popup-header">
+        <h2>Send</h2>
+        <button class="modal-close" id="close-send-modal" aria-label="Close">&times;</button>
+      </div>
+      <div class="fullpage-popup-body">
+        <div id="send-step-asset" class="send-step">
+          <p class="send-hint">Choose the asset to send</p>
+          <div class="send-asset-card" id="send-usdt-card">
+            <img src="https://assets.coingecko.com/coins/images/325/small/Tether.png" alt="USDT">
+            <div class="send-asset-info">
+              <strong>Tether USD</strong>
+              <span>USDT · Stablecoin</span>
+            </div>
+            <span class="send-asset-chevron">›</span>
+          </div>
+          <div class="send-asset-card" id="send-eth-card">
+            <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH">
+            <div class="send-asset-info">
+              <strong>Ethereum</strong>
+              <span>ETH · Mainnet</span>
+            </div>
+            <span class="send-asset-chevron">›</span>
+          </div>
+          <div class="send-asset-card" id="send-bnb-card">
+            <img src="https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" alt="BNB">
+            <div class="send-asset-info">
+              <strong>BNB Chain</strong>
+              <span>BNB · Smart Chain</span>
+            </div>
+            <span class="send-asset-chevron">›</span>
+          </div>
+          <div class="send-asset-card" id="send-sol-card">
+            <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="SOL">
+            <div class="send-asset-info">
+              <strong>Solana</strong>
+              <span>SOL · Network</span>
+            </div>
+            <span class="send-asset-chevron">›</span>
+          </div>
+          <div class="send-asset-card" id="send-polygon-card">
+            <img src="https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png" alt="MATIC">
+            <div class="send-asset-info">
+              <strong>Polygon</strong>
+              <span>MATIC · Network</span>
+            </div>
+            <span class="send-asset-chevron">›</span>
+          </div>
+        </div>
+        <div id="send-step-blockchain" class="send-step" hidden>
+          <button class="back-to-asset" id="send-back-to-asset" aria-label="Back">
+            <span class="back-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </span>
+          </button>
+          <p class="send-hint">Select blockchain for USDT</p>
+          <div class="send-blockchain-options">
+            <button class="send-blockchain-option" data-network="ethereum" data-balance="890000" data-logo="https://assets.coingecko.com/coins/images/279/small/ethereum.png" data-label="USDT (ERC-20) · Ethereum">
+              <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="">
+              <div class="send-blockchain-info">
+                <strong>Ethereum (ERC-20)</strong>
+                <span class="send-blockchain-balance">890,000 USDT · $890,000</span>
+              </div>
+              <span class="send-blockchain-chevron">›</span>
+            </button>
+            <button class="send-blockchain-option" data-network="tron" data-balance="0" data-logo="https://assets.coingecko.com/coins/images/1094/small/tron-logo.png" data-label="USDT (TRC-20) · TRON">
+              <img src="https://assets.coingecko.com/coins/images/1094/small/tron-logo.png" alt="">
+              <div class="send-blockchain-info">
+                <strong>TRON (TRC-20)</strong>
+                <span class="send-blockchain-balance">0 USDT</span>
+              </div>
+              <span class="send-blockchain-chevron">›</span>
+            </button>
+            <button class="send-blockchain-option" data-network="bnb" data-balance="0" data-logo="https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" data-label="USDT (BEP-20) · BNB Chain">
+              <img src="https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" alt="">
+              <div class="send-blockchain-info">
+                <strong>BNB Chain (BEP-20)</strong>
+                <span class="send-blockchain-balance">0 USDT</span>
+              </div>
+              <span class="send-blockchain-chevron">›</span>
+            </button>
+            <button class="send-blockchain-option" data-network="polygon" data-balance="0" data-logo="https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png" data-label="USDT · Polygon">
+              <img src="https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png" alt="">
+              <div class="send-blockchain-info">
+                <strong>Polygon</strong>
+                <span class="send-blockchain-balance">0 USDT</span>
+              </div>
+              <span class="send-blockchain-chevron">›</span>
+            </button>
+          </div>
+        </div>
+        <div id="send-step-form" class="send-step" hidden>
+          <button class="back-to-choose" id="send-back-btn" aria-label="Change network">
+            <span class="back-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </span>
+          </button>
+          <p class="send-network-badge" id="send-selected-badge">
+            <img id="send-network-logo" src="" alt="" width="20" height="20">
+            <span id="send-network-label"></span>
+          </p>
+          <div class="form-group">
+            <label for="recipient-address">Recipient address</label>
+            <input type="text" id="recipient-address" placeholder="0x..." maxlength="42" class="input-address" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="send-amount" id="send-amount-label">Amount</label>
+            <div class="amount-input-wrap">
+              <input type="text" id="send-amount" placeholder="0.00" inputmode="decimal" class="input-amount">
+              <button type="button" class="max-btn" id="max-amount-btn">Max</button>
+            </div>
+          </div>
+          <div class="send-summary" id="send-summary">
+            <div class="summary-row">
+              <span class="summary-label">Amount</span>
+              <span class="summary-value num-font" id="send-amount-display">—</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Network fee</span>
+              <span class="summary-value num-font" id="send-network-fee-eth">—</span>
+            </div>
+            <div class="summary-row summary-total">
+              <span class="summary-label">Total</span>
+              <span class="summary-value summary-total-value num-font" id="send-total">—</span>
+            </div>
+          </div>
+          <div class="send-popup-actions">
+            <button class="btn btn-cancel btn-full" id="cancel-send-btn">Cancel</button>
+            <button class="btn btn-primary btn-send btn-full" id="confirm-send-btn" disabled>
+              <span>Review &amp; Send</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full-page USDT Popup: blockchains with 0 USDT, 890k only for ETH -->
+  <div class="fullpage-popup-overlay" id="usdt-popup" aria-hidden="true">
+    <div class="fullpage-popup">
+      <div class="fullpage-popup-header">
+        <h2>Deposit USDT</h2>
+        <button class="modal-close" id="close-usdt-popup" aria-label="Close">&times;</button>
+      </div>
+      <div class="fullpage-popup-body">
+        <p class="deposit-hint">Select a blockchain to see balance and deposit address</p>
+        <div class="blockchain-cards" id="usdt-blockchain-cards">
+          <article class="blockchain-card selected" data-network="ethereum" data-usdt="890000" data-logo="https://assets.coingecko.com/coins/images/279/small/ethereum.png">
+            <div class="blockchain-card-header">
+              <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="">
+              <div>
+                <strong>Ethereum (ERC-20)</strong>
+                <span class="blockchain-balance" data-balance>890,000 USDT · $890,000</span>
+              </div>
+            </div>
+            <button class="deposit-btn-blockchain" data-address="0x742d35Cc6634C0532925a3b844Bc9e7595f8f3a">Deposit</button>
+          </article>
+          <article class="blockchain-card" data-network="tron" data-usdt="0" data-logo="https://assets.coingecko.com/coins/images/1094/small/tron-logo.png">
+            <div class="blockchain-card-header">
+              <img src="https://assets.coingecko.com/coins/images/1094/small/tron-logo.png" alt="">
+              <div>
+                <strong>TRON (TRC-20)</strong>
+                <span class="blockchain-balance" data-balance>0 USDT</span>
+              </div>
+            </div>
+            <button class="deposit-btn-blockchain" data-address="TXYZopYRdj2D9XRtbG4dWNrj3d1dYdYdYdY">Deposit</button>
+          </article>
+          <article class="blockchain-card" data-network="bnb" data-usdt="0" data-logo="https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png">
+            <div class="blockchain-card-header">
+              <img src="https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" alt="">
+              <div>
+                <strong>BNB Chain (BEP-20)</strong>
+                <span class="blockchain-balance" data-balance>0 USDT</span>
+              </div>
+            </div>
+            <button class="deposit-btn-blockchain" data-address="bnb1q742d35cc6634c0532925a3b844bc9e7595f8f3a">Deposit</button>
+          </article>
+          <article class="blockchain-card" data-network="polygon" data-usdt="0" data-logo="https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png">
+            <div class="blockchain-card-header">
+              <img src="https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png" alt="">
+              <div>
+                <strong>Polygon</strong>
+                <span class="blockchain-balance" data-balance>0 USDT</span>
+              </div>
+            </div>
+            <button class="deposit-btn-blockchain" data-address="0x742d35Cc6634C0532925a3b844Bc9e7595f8f3a">Deposit</button>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full-page Crypto Asset Popup (BTC, ETH, SOL, BNB): template like reference -->
+  <div class="fullpage-popup-overlay" id="crypto-popup" aria-hidden="true">
+    <div class="fullpage-popup crypto-detail-popup">
+      <div class="crypto-popup-header">
+        <button class="crypto-popup-back" id="close-crypto-popup" aria-label="Back">‹</button>
+        <div class="crypto-popup-title-row">
+          <img id="crypto-popup-logo" src="" alt="" class="crypto-header-logo">
+          <div class="crypto-popup-title-text">
+            <h1 id="crypto-popup-name" class="crypto-popup-name">—</h1>
+            <span id="crypto-popup-symbol" class="crypto-popup-symbol">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="crypto-detail-scroll">
+        <div class="fullpage-popup-body crypto-detail-body">
+          <div class="crypto-price-block">
+            <span class="crypto-price-amount" id="crypto-popup-price">—</span>
+            <span class="crypto-price-change positive" id="crypto-popup-change-text">+$0.00 (0%)</span>
+          </div>
+          <div class="crypto-chart-wrap">
+            <canvas id="crypto-chart"></canvas>
+          </div>
+          <div class="crypto-chart-tabs">
+            <button class="chart-tab" data-range="1">1H</button>
+            <button class="chart-tab active" data-range="7">1D</button>
+            <button class="chart-tab" data-range="30">1W</button>
+            <button class="chart-tab" data-range="90">1M</button>
+            <button class="chart-tab" data-range="365">1Y</button>
+            <button class="chart-tab" data-range="max">ALL</button>
+          </div>
+          <div class="crypto-actions-grid">
+            <button class="crypto-action-btn" id="crypto-receive-btn">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Receive</span>
+            </button>
+            <button class="crypto-action-btn" id="crypto-info-btn">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span>Info</span>
+            </button>
+          </div>
+          <section class="crypto-info-section">
+            <h3 class="crypto-info-heading">Info</h3>
+            <div class="crypto-info-card">
+              <div class="crypto-info-row"><span class="crypto-info-label">Name</span><span class="crypto-info-value" id="info-name">—</span></div>
+              <div class="crypto-info-row"><span class="crypto-info-label">Symbol</span><span class="crypto-info-value" id="info-symbol">—</span></div>
+              <div class="crypto-info-row"><span class="crypto-info-label">Network</span><span class="crypto-info-value" id="info-network">—</span></div>
+              <div class="crypto-info-row"><span class="crypto-info-label">Market Cap</span><span class="crypto-info-value num-font" id="info-market-cap">—</span></div>
+              <div class="crypto-info-row"><span class="crypto-info-label">Total Supply</span><span class="crypto-info-value num-font" id="info-total-supply">—</span></div>
+              <div class="crypto-info-row"><span class="crypto-info-label">Circulating Supply</span><span class="crypto-info-value num-font" id="info-circulating-supply">—</span></div>
+            </div>
+            <h3 class="crypto-info-heading">About</h3>
+            <p class="crypto-about-text" id="crypto-about-text">Loading...</p>
+            <button type="button" class="crypto-show-more" id="crypto-show-more">Show more</button>
+            <div class="crypto-info-links">
+              <a href="#" class="crypto-link-btn" id="info-website" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Website</a>
+              <a href="#" class="crypto-link-btn" id="info-twitter" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> X</a>
+            </div>
+          </section>
+        </div>
+      </div>
+      <div class="crypto-buy-footer">
+        <button class="btn btn-buy-crypto btn-buy-fixed" id="crypto-buy-btn">Buy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deposit/Receive address - professional design -->
+  <div class="fullpage-popup-overlay deposit-address-overlay" id="deposit-address-modal" aria-hidden="true">
+    <div class="fullpage-popup deposit-address-popup">
+      <div class="fullpage-popup-header">
+        <h2>Receive</h2>
+        <button class="modal-close" id="close-deposit-address-modal" aria-label="Close">&times;</button>
+      </div>
+      <div class="fullpage-popup-body deposit-address-body">
+        <div class="deposit-address-card">
+          <div class="deposit-address-header">
+            <div class="deposit-asset-badge">
+              <img id="deposit-address-logo" src="" alt="" class="deposit-logo-img">
+              <span id="deposit-address-network-badge"></span>
+            </div>
+            <p class="deposit-subtitle">Your unique deposit address</p>
+          </div>
+          <div class="deposit-address-warning-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div>
+              <strong>Important</strong>
+              <span>Only send assets on this network. Sending other tokens may result in permanent loss.</span>
+            </div>
+          </div>
+          <div class="deposit-address-display">
+            <div class="address-block">
+              <code class="address-monospace" id="deposit-address-value"></code>
+            </div>
+            <button class="copy-address-btn-primary" id="copy-deposit-address-value">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copy Address
+            </button>
+          </div>
+          <div class="deposit-security-badges">
+            <span class="security-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Secure</span>
+            <span class="security-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Encrypted</span>
+          </div>
+          <div class="qr-code-wrap">
+            <canvas id="receive-qr-canvas" width="200" height="200"></canvas>
+            <img id="receive-qr-logo" src="" alt="" class="qr-logo-overlay">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,833 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Staking | High-Yield Crypto Assets</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        @media (max-width: 768px) {
+            .card-hover:hover {
+                transform: none;
+            }
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        /* Loader */
+        .loader {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 3px solid #ffffff;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Mobile Bottom Safe Area */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 1.5rem);
+        }
+
+        /* Lock Period Selector */
+        .lock-btn {
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .lock-btn.active {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+        }
+        .lock-btn:not(.active):hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        /* Modal Transitions */
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+        }
+        .modal-exit {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .modal-exit-active {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.15s ease-in, transform 0.15s ease-in;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="text-slate-800 antialiased overflow-x-hidden">
+
+    <!-- Background Elements -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-[-10%] right-[-10%] w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float" style="animation-delay: 2s"></div>
+    </div>
+
+    <div class="flex h-screen overflow-hidden relative">
+
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-30 hidden opacity-0 transition-opacity duration-300 md:hidden" onclick="toggleMobileMenu()"></div>
+
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed md:relative inset-y-0 left-0 z-40 w-[280px] bg-white border-r border-slate-200 h-full shadow-2xl md:shadow-none transform -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col">
+            <div class="p-6 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/30">
+                        <i class="fa-solid fa-layer-group text-sm"></i>
+                    </div>
+                    <span class="text-xl font-bold text-slate-800 tracking-tight">NexusStake</span>
+                </div>
+                <button class="md:hidden text-slate-400 hover:text-slate-600" onclick="toggleMobileMenu()">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 bg-brand-50 text-brand-700 rounded-xl font-medium transition-colors">
+                    <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i class="fa-solid fa-wallet w-5 text-center"></i> My Assets
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i class="fa-solid fa-arrow-right-arrow-left w-5 text-center"></i> Swap
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Rewards
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
+                    <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i> History
+                </a>
+            </nav>
+
+            <div class="p-4 mt-auto">
+                <div class="bg-gradient-to-br from-brand-600 to-brand-800 rounded-xl p-4 text-white relative overflow-hidden shadow-lg shadow-brand-500/20">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-white opacity-10 rounded-full -mr-10 -mt-10"></div>
+                    <h3 class="font-semibold text-sm mb-1">Pro Member</h3>
+                    <p class="text-xs text-blue-100 mb-3">Earn up to 2% extra APY</p>
+                    <button class="w-full py-2 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-medium transition-colors backdrop-blur-sm active:scale-95 transform">Upgrade</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col h-full overflow-hidden relative w-full">
+
+            <!-- Header -->
+            <header class="h-16 md:h-20 glass flex items-center justify-between px-4 md:px-6 sticky top-0 z-20">
+                <div class="flex items-center gap-3 md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-slate-600 w-10 h-10 flex items-center justify-center -ml-2 active:bg-slate-100 rounded-lg">
+                        <i class="fa-solid fa-bars text-lg"></i>
+                    </button>
+                    <span class="font-bold text-lg text-brand-700">NexusStake</span>
+                </div>
+
+                <!-- Search -->
+                <div class="hidden md:flex items-center bg-slate-100/80 rounded-full px-4 py-2.5 w-full max-w-md border border-transparent focus-within:border-brand-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-brand-500/10 transition-all">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400 mr-3 text-sm"></i>
+                    <input type="text" id="searchInput" placeholder="Search assets (e.g., Ethereum, Solana)" class="bg-transparent border-none outline-none text-sm w-full text-slate-700 placeholder-slate-400">
+                </div>
+
+                <!-- User Profile -->
+                <div class="flex items-center gap-2 md:gap-4">
+                    <button class="relative p-2 md:p-2.5 text-slate-500 hover:bg-slate-100 rounded-full transition-colors active:scale-95">
+                        <i class="fa-regular fa-bell text-lg"></i>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+                    <div class="flex items-center gap-2 md:gap-3 pl-2 md:pl-4 md:border-l border-slate-200">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-semibold text-slate-800 leading-tight">Alex Morgan</p>
+                            <p class="text-xs text-slate-500">Level 4</p>
+                        </div>
+                        <img src="https://i.pravatar.cc/150?img=11" alt="User" class="w-9 h-9 md:w-10 md:h-10 rounded-full border-2 border-white shadow-sm object-cover">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Mobile Search (Visible only on small screens) -->
+            <div class="md:hidden px-4 py-3 bg-white/50 border-b border-slate-100">
+                <div class="flex items-center bg-slate-100 rounded-xl px-3 py-2.5 border border-transparent focus-within:border-brand-300 focus-within:bg-white focus-within:ring-2 focus-within:ring-brand-500/10 transition-all">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400 mr-2 text-sm"></i>
+                    <input type="text" id="searchInputMobile" placeholder="Search assets..." class="bg-transparent border-none outline-none text-sm w-full text-slate-700 placeholder-slate-400">
+                </div>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto overscroll-y-none scroll-smooth" id="mainScroll">
+                <div class="p-4 md:p-8 max-w-7xl mx-auto">
+
+                    <!-- Hero / Stats Section -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-10">
+                        <!-- Welcome -->
+                        <div class="lg:col-span-2 bg-white rounded-2xl p-5 md:p-8 shadow-sm border border-slate-100 relative overflow-hidden">
+                            <div class="relative z-10">
+                                <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Stake & Earn</h1>
+                                <p class="text-slate-500 mb-4 md:mb-6 text-sm md:text-base max-w-lg">Lock your assets to earn high-yield rewards. Choose from flexible or fixed terms.</p>
+
+                                <div class="flex flex-wrap gap-3">
+                                    <div class="bg-blue-50 px-3 py-2 md:px-4 md:py-2.5 rounded-lg border border-blue-100 flex-1 min-w-[140px]">
+                                        <p class="text-[10px] md:text-xs text-blue-600 font-bold uppercase tracking-wider mb-0.5">Total Value Locked</p>
+                                        <p class="text-lg md:text-xl font-bold text-slate-900" id="tvlDisplay">$0.00</p>
+                                    </div>
+                                    <div class="bg-indigo-50 px-3 py-2 md:px-4 md:py-2.5 rounded-lg border border-indigo-100 flex-1 min-w-[140px]">
+                                        <p class="text-[10px] md:text-xs text-indigo-600 font-bold uppercase tracking-wider mb-0.5">Rewards Earned</p>
+                                        <p class="text-lg md:text-xl font-bold text-slate-900" id="rewardsDisplay">$0.00</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute right-0 bottom-0 opacity-5 transform translate-x-6 translate-y-6 md:translate-x-10 md:translate-y-10 pointer-events-none">
+                                <i class="fa-brands fa-bitcoin text-8xl md:text-9xl text-brand-600"></i>
+                            </div>
+                        </div>
+
+                        <!-- Quick Action / Promo -->
+                        <div class="bg-brand-600 rounded-2xl p-5 md:p-8 text-white shadow-lg shadow-brand-500/30 relative overflow-hidden flex flex-col justify-between min-h-[160px]">
+                            <div class="absolute top-0 right-0 w-32 h-32 md:w-40 md:h-40 bg-white opacity-10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                            <div class="relative z-10">
+                                <span class="bg-brand-500 text-[10px] md:text-xs font-bold px-2 py-1 rounded text-white mb-2 inline-block">NEW</span>
+                                <h3 class="text-xl md:text-2xl font-bold mb-1">Solana Super Stake</h3>
+                                <p class="text-blue-100 text-xs md:text-sm mb-3">Limited time offer for fixed 90-day term.</p>
+                            </div>
+                            <div class="relative z-10 flex items-end justify-between mt-2">
+                                <div>
+                                    <p class="text-3xl md:text-4xl font-bold">8.5%</p>
+                                    <p class="text-xs md:text-sm text-blue-200">APY</p>
+                                </div>
+                                <button onclick="openStakeModal('solana')" class="bg-white text-brand-600 px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold text-sm hover:bg-blue-50 transition-colors shadow-md active:scale-95 transform">
+                                    Start Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filters & Sort -->
+                    <div class="flex flex-col gap-4 mb-6">
+                        <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar -mx-1 px-1">
+                            <button class="filter-btn active flex-shrink-0 px-4 py-2 rounded-full text-xs md:text-sm font-medium bg-brand-600 text-white shadow-md transition-all" data-filter="all">All Assets</button>
+                            <button class="filter-btn flex-shrink-0 px-4 py-2 rounded-full text-xs md:text-sm font-medium bg-white text-slate-600 border border-slate-200 hover:border-brand-300 hover:text-brand-600 transition-all" data-filter="high">High APY (>10%)</button>
+                            <button class="filter-btn flex-shrink-0 px-4 py-2 rounded-full text-xs md:text-sm font-medium bg-white text-slate-600 border border-slate-200 hover:border-brand-300 hover:text-brand-600 transition-all" data-filter="stable">Stablecoins</button>
+                            <button class="filter-btn flex-shrink-0 px-4 py-2 rounded-full text-xs md:text-sm font-medium bg-white text-slate-600 border border-slate-200 hover:border-brand-300 hover:text-brand-600 transition-all" data-filter="flexible">Flexible</button>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg md:text-xl font-bold text-slate-800">Available Assets</h2>
+                            <div class="flex items-center gap-2 text-xs md:text-sm text-slate-500">
+                                <span class="hidden sm:inline">Sort by:</span>
+                                <select id="sortSelect" class="bg-white border border-slate-200 rounded-lg px-2 py-1.5 md:px-3 md:py-2 outline-none focus:border-brand-500 text-slate-700 font-medium cursor-pointer text-xs md:text-sm">
+                                    <option value="apy_desc">Highest APY</option>
+                                    <option value="apy_asc">Lowest APY</option>
+                                    <option value="name_asc">Name (A-Z)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Staking Grid -->
+                    <div id="stakingGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 pb-10">
+                        <!-- Cards injected via JS -->
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Staking Modal -->
+    <div id="stakeModal" class="fixed inset-0 z-50 hidden flex items-end md:items-center justify-center">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity opacity-0" id="modalBackdrop" onclick="closeStakeModal()"></div>
+
+        <!-- Modal Panel -->
+        <div class="bg-white w-full md:w-full md:max-w-lg rounded-t-3xl md:rounded-2xl shadow-2xl transform translate-y-full md:translate-y-0 md:scale-95 opacity-0 transition-all duration-300 max-h-[92vh] flex flex-col" id="modalPanel">
+            
+            <!-- Drag Handle (Mobile) -->
+            <div class="md:hidden w-full flex justify-center pt-3 pb-1" onclick="closeStakeModal()">
+                <div class="w-12 h-1.5 bg-slate-300 rounded-full"></div>
+            </div>
+
+            <!-- Header -->
+            <div class="flex justify-between items-center p-5 md:p-6 border-b border-slate-100 flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <img id="modalIcon" src="" alt="" class="w-10 h-10 md:w-12 md:h-12 rounded-full shadow-sm">
+                    <div>
+                        <h3 class="text-lg md:text-xl font-bold text-slate-900" id="modalTitle">Asset Name</h3>
+                        <p class="text-xs md:text-sm text-slate-500 font-medium" id="modalSymbol">SYM</p>
+                    </div>
+                </div>
+                <button onclick="closeStakeModal()" class="text-slate-400 hover:text-slate-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors active:bg-slate-200">
+                    <i class="fa-solid fa-xmark text-lg md:text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Scrollable Body -->
+            <div class="overflow-y-auto p-5 md:p-6 space-y-5 md:space-y-6 flex-1">
+                
+                <!-- Lock Period Selector -->
+                <div>
+                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-3">Select Lock Period</label>
+                    <div class="grid grid-cols-4 gap-2 md:gap-3">
+                        <button class="lock-btn active border border-slate-200 rounded-xl p-2 md:p-3 flex flex-col items-center justify-center gap-1" data-days="7" data-multiplier="1.0" onclick="selectLockPeriod(this)">
+                            <span class="text-[10px] md:text-xs font-bold uppercase text-slate-500 lock-label">Flexible</span>
+                            <span class="text-xs md:text-sm font-bold">7 Days</span>
+                        </button>
+                        <button class="lock-btn border border-slate-200 rounded-xl p-2 md:p-3 flex flex-col items-center justify-center gap-1" data-days="30" data-multiplier="1.15" onclick="selectLockPeriod(this)">
+                            <span class="text-[10px] md:text-xs font-bold uppercase text-slate-500 lock-label">1 Month</span>
+                            <span class="text-xs md:text-sm font-bold">30 Days</span>
+                            <span class="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">+15%</span>
+                        </button>
+                        <button class="lock-btn border border-slate-200 rounded-xl p-2 md:p-3 flex flex-col items-center justify-center gap-1" data-days="90" data-multiplier="1.35" onclick="selectLockPeriod(this)">
+                            <span class="text-[10px] md:text-xs font-bold uppercase text-slate-500 lock-label">3 Months</span>
+                            <span class="text-xs md:text-sm font-bold">90 Days</span>
+                            <span class="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">+35%</span>
+                        </button>
+                        <button class="lock-btn border border-slate-200 rounded-xl p-2 md:p-3 flex flex-col items-center justify-center gap-1" data-days="365" data-multiplier="1.6" onclick="selectLockPeriod(this)">
+                            <span class="text-[10px] md:text-xs font-bold uppercase text-slate-500 lock-label">1 Year</span>
+                            <span class="text-xs md:text-sm font-bold">365 Days</span>
+                            <span class="text-[10px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">+60%</span>
+                        </button>
+                    </div>
+                    <p class="text-[11px] md:text-xs text-slate-500 mt-2 flex items-center gap-1.5">
+                        <i class="fa-regular fa-clock"></i>
+                        Unlock date: <span id="unlockDate" class="font-semibold text-slate-700">--</span>
+                    </p>
+                </div>
+
+                <!-- APY Display -->
+                <div class="flex justify-between items-center bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100">
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Base APY</p>
+                        <p class="text-sm text-slate-400 line-through decoration-slate-400" id="baseApyDisplay">0%</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-brand-600 font-bold uppercase tracking-wide mb-0.5">Final APY</p>
+                        <p class="text-2xl md:text-3xl font-bold text-brand-600" id="modalApy">0%</p>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-xs md:text-sm font-semibold text-slate-700">Amount to Stake</label>
+                        <span class="text-xs text-slate-500">Available: <span id="userBalance" class="font-medium text-slate-700">0.00</span></span>
+                    </div>
+                    <div class="relative">
+                        <input type="number" id="stakeAmount" placeholder="0.00" class="w-full pl-4 pr-24 py-3.5 md:py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-lg md:text-xl font-bold text-slate-900 transition-all">
+                        <div class="absolute right-2 top-2 bottom-2 flex items-center gap-2">
+                            <span class="text-xs font-bold text-slate-400 hidden sm:block" id="inputSymbol">ETH</span>
+                            <button onclick="setMaxAmount()" class="h-full px-3 text-xs font-bold text-brand-600 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors active:scale-95">MAX</button>
+                        </div>
+                    </div>
+                    <div class="flex justify-end mt-1.5">
+                        <span class="text-xs text-slate-400">≈ $<span id="usdValue">0.00</span></span>
+                    </div>
+                </div>
+
+                <!-- Calculator Preview -->
+                <div class="bg-slate-50 rounded-xl p-4 md:p-5 border border-slate-100 space-y-3">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-500 text-xs md:text-sm">Lock Period</span>
+                        <span class="font-semibold text-slate-800 text-xs md:text-sm" id="calcDays">7 Days</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-500 text-xs md:text-sm">Daily Rewards</span>
+                        <span class="font-semibold text-slate-800 text-xs md:text-sm" id="dailyReward">0.00</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-500 text-xs md:text-sm">Total Reward (<span id="periodLabel">Period</span>)</span>
+                        <span class="font-bold text-brand-700 text-xs md:text-sm" id="totalPeriodReward">0.00</span>
+                    </div>
+                    <div class="h-px bg-slate-200 my-2"></div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-500 text-xs md:text-sm">Yearly Projection (if compounded)</span>
+                        <span class="font-bold text-slate-800 text-xs md:text-sm" id="yearlyReward">0.00</span>
+                    </div>
+                </div>
+
+                <!-- Terms -->
+                <div class="flex items-start gap-3 bg-yellow-50/50 p-3 rounded-lg border border-yellow-100">
+                    <input type="checkbox" id="termsCheck" class="mt-0.5 w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500 cursor-pointer">
+                    <label for="termsCheck" class="text-[11px] md:text-xs text-slate-600 leading-relaxed cursor-pointer">I understand that assets will be locked until the end of the selected period and early withdrawal is not available.</label>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="p-5 md:p-6 pt-0 md:pt-0 border-t border-slate-50 flex-shrink-0">
+                <button id="confirmStakeBtn" onclick="confirmStake()" class="w-full py-3.5 md:py-4 bg-brand-600 hover:bg-brand-700 disabled:bg-slate-300 disabled:text-slate-500 text-white rounded-xl font-bold text-base md:text-lg shadow-lg shadow-brand-500/20 transition-all transform active:scale-[0.98] disabled:active:scale-100 flex items-center justify-center gap-2">
+                    <span>Confirm Staking</span>
+                    <i class="fa-solid fa-arrow-right text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-0 left-0 md:left-auto md:right-6 transform translate-y-24 opacity-0 transition-all duration-500 z-50 flex justify-center md:block pointer-events-none">
+        <div class="bg-slate-800 text-white px-5 py-3 md:px-6 md:py-4 rounded-xl shadow-2xl flex items-center gap-3 md:gap-4 mx-4 md:mx-0 pointer-events-auto">
+            <div class="w-6 h-6 md:w-8 md:h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-check text-xs md:text-sm"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-xs md:text-sm">Success</h4>
+                <p class="text-[11px] md:text-xs text-slate-300" id="toastMessage">Transaction completed.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Data ---
+        const assets = [
+            { id: 'bitcoin', name: 'Bitcoin', symbol: 'BTC', baseApy: 4.5, price: 64230.50, type: 'flexible', balance: 0.45, icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png' },
+            { id: 'ethereum', name: 'Ethereum', symbol: 'ETH', baseApy: 5.2, price: 3450.20, type: 'flexible', balance: 4.2, icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png' },
+            { id: 'solana', name: 'Solana', symbol: 'SOL', baseApy: 8.5, price: 145.80, type: 'fixed', balance: 150, icon: 'https://cryptologos.cc/logos/solana-sol-logo.png' },
+            { id: 'usdt', name: 'Tether', symbol: 'USDT', baseApy: 12.5, price: 1.00, type: 'stable', balance: 5000, icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png' },
+            { id: 'usdc', name: 'USD Coin', symbol: 'USDC', baseApy: 11.8, price: 1.00, type: 'stable', balance: 2500, icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png' },
+            { id: 'polkadot', name: 'Polkadot', symbol: 'DOT', baseApy: 14.2, price: 7.20, type: 'fixed', balance: 800, icon: 'https://cryptologos.cc/logos/polkadot-new-dot-logo.png' },
+            { id: 'cardano', name: 'Cardano', symbol: 'ADA', baseApy: 6.1, price: 0.45, type: 'flexible', balance: 10000, icon: 'https://cryptologos.cc/logos/cardano-ada-logo.png' },
+            { id: 'matic', name: 'Polygon', symbol: 'MATIC', baseApy: 9.8, price: 0.72, type: 'fixed', balance: 5000, icon: 'https://cryptologos.cc/logos/polygon-matic-logo.png' },
+            { id: 'avalanche', name: 'Avalanche', symbol: 'AVAX', baseApy: 7.4, price: 35.50, type: 'flexible', balance: 50, icon: 'https://cryptologos.cc/logos/avalanche-avax-logo.png' },
+        ];
+
+        const lockPeriods = [
+            { days: 7, label: '7 Days', multiplier: 1.0, bonus: '0%' },
+            { days: 30, label: '1 Month', multiplier: 1.15, bonus: '+15%' },
+            { days: 90, label: '3 Months', multiplier: 1.35, bonus: '+35%' },
+            { days: 365, label: '1 Year', multiplier: 1.6, bonus: '+60%' }
+        ];
+
+        let currentFilter = 'all';
+        let currentSort = 'apy_desc';
+        let selectedAsset = null;
+        let selectedLock = lockPeriods[0];
+        let userTotalStaked = 12450.00;
+        let userTotalRewards = 450.20;
+
+        // --- DOM Elements ---
+        const grid = document.getElementById('stakingGrid');
+        const searchInput = document.getElementById('searchInput');
+        const searchInputMobile = document.getElementById('searchInputMobile');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const sortSelect = document.getElementById('sortSelect');
+        const modal = document.getElementById('stakeModal');
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const modalPanel = document.getElementById('modalPanel');
+        const stakeAmountInput = document.getElementById('stakeAmount');
+        const termsCheck = document.getElementById('termsCheck');
+        const confirmBtn = document.getElementById('confirmStakeBtn');
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+            renderAssets();
+            setupEventListeners();
+            updateUnlockDate();
+        });
+
+        // --- Mobile Menu ---
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            const isOpen = !sidebar.classList.contains('-translate-x-full');
+            
+            if (isOpen) {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+                overlay.classList.remove('opacity-100');
+                document.body.style.overflow = '';
+            } else {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                // trigger reflow
+                void overlay.offsetWidth;
+                overlay.classList.add('opacity-100');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // --- Core Functions ---
+
+        function updateStats() {
+            animateValue("tvlDisplay", 0, userTotalStaked, 1000, true);
+            animateValue("rewardsDisplay", 0, userTotalRewards, 1000, true);
+        }
+
+        function getBoostedApy(baseApy, multiplier) {
+            return (baseApy * multiplier).toFixed(2);
+        }
+
+        function renderAssets() {
+            grid.innerHTML = '';
+            const searchTerm = (searchInput.value || searchInputMobile.value).toLowerCase();
+            
+            let filtered = assets.filter(asset => {
+                const matchesSearch = asset.name.toLowerCase().includes(searchTerm) || 
+                                      asset.symbol.toLowerCase().includes(searchTerm);
+                if (!matchesSearch) return false;
+
+                if (currentFilter === 'all') return true;
+                if (currentFilter === 'high') return asset.baseApy > 10;
+                if (currentFilter === 'stable') return asset.type === 'stable';
+                if (currentFilter === 'flexible') return asset.type === 'flexible';
+                return true;
+            });
+
+            filtered.sort((a, b) => {
+                if (currentSort === 'apy_desc') return b.baseApy - a.baseApy;
+                if (currentSort === 'apy_asc') return a.baseApy - b.baseApy;
+                if (currentSort === 'name_asc') return a.name.localeCompare(b.name);
+                return 0;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-16 text-slate-400">
+                    <i class="fa-solid fa-coins text-4xl mb-4 opacity-50"></i>
+                    <p class="text-sm">No assets found matching your criteria.</p>
+                </div>`;
+                return;
+            }
+
+            filtered.forEach((asset, index) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl p-5 border border-slate-100 shadow-sm card-hover flex flex-col justify-between h-full relative overflow-hidden fade-in';
+                card.style.animationDelay = `${index * 0.05}s`;
+
+                let badge = '';
+                if(asset.baseApy > 10) badge = `<span class="absolute top-4 right-4 bg-orange-100 text-orange-600 text-[10px] md:text-xs font-bold px-2 py-1 rounded-md border border-orange-200">HIGH YIELD</span>`;
+                else if(asset.type === 'stable') badge = `<span class="absolute top-4 right-4 bg-green-100 text-green-600 text-[10px] md:text-xs font-bold px-2 py-1 rounded-md border border-green-200">STABLE</span>`;
+
+                card.innerHTML = `
+                    ${badge}
+                    <div>
+                        <div class="flex items-center gap-3 md:gap-4 mb-4">
+                            <img src="${asset.icon}" alt="${asset.name}" class="w-10 h-10 md:w-12 md:h-12 rounded-full shadow-sm object-cover">
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-base md:text-lg">${asset.name}</h3>
+                                <p class="text-slate-500 text-xs md:text-sm font-medium">${asset.symbol}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-end mb-5 md:mb-6">
+                            <div>
+                                <p class="text-[10px] md:text-xs text-slate-400 font-bold uppercase tracking-wide mb-1">Annual Yield</p>
+                                <p class="text-2xl md:text-3xl font-bold text-brand-600">${asset.baseApy}% <span class="text-xs md:text-sm font-normal text-slate-400">Base APY</span></p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] md:text-xs text-slate-400 font-medium">Price</p>
+                                <p class="text-sm md:text-base font-semibold text-slate-700">$${asset.price.toLocaleString()}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-xs text-slate-500 bg-slate-50 p-2.5 rounded-lg">
+                            <span>Type</span>
+                            <span class="font-medium text-slate-700 capitalize">${asset.type}</span>
+                        </div>
+                        <button onclick="openStakeModal('${asset.id}')" class="w-full py-3 bg-slate-900 hover:bg-brand-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-slate-200 hover:shadow-brand-500/30 flex items-center justify-center gap-2 active:scale-[0.98]">
+                            Stake Now <i class="fa-solid fa-chevron-right text-[10px] opacity-50"></i>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function setupEventListeners() {
+            searchInput.addEventListener('input', renderAssets);
+            searchInputMobile.addEventListener('input', renderAssets);
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    filterBtns.forEach(b => {
+                        b.classList.remove('bg-brand-600', 'text-white', 'shadow-md');
+                        b.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200');
+                    });
+                    e.target.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-200');
+                    e.target.classList.add('bg-brand-600', 'text-white', 'shadow-md');
+                    currentFilter = e.target.dataset.filter;
+                    renderAssets();
+                });
+            });
+
+            sortSelect.addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                renderAssets();
+            });
+
+            stakeAmountInput.addEventListener('input', calculateRewards);
+            termsCheck.addEventListener('change', toggleConfirmButton);
+        }
+
+        // --- Lock Period Logic ---
+        function selectLockPeriod(btn) {
+            document.querySelectorAll('.lock-btn').forEach(b => {
+                b.classList.remove('active');
+                b.querySelector('.lock-label').classList.remove('text-white', 'text-slate-500');
+                b.querySelector('.lock-label').classList.add('text-slate-500');
+            });
+            
+            btn.classList.add('active');
+            btn.querySelector('.lock-label').classList.remove('text-slate-500');
+            btn.querySelector('.lock-label').classList.add('text-white');
+            
+            const days = parseInt(btn.dataset.days);
+            const multiplier = parseFloat(btn.dataset.multiplier);
+            selectedLock = lockPeriods.find(l => l.days === days);
+            
+            updateUnlockDate();
+            calculateRewards();
+        }
+
+        function updateUnlockDate() {
+            if (!selectedLock) return;
+            const date = new Date();
+            date.setDate(date.getDate() + selectedLock.days);
+            const options = { month: 'short', day: 'numeric', year: 'numeric' };
+            document.getElementById('unlockDate').innerText = date.toLocaleDateString('en-US', options);
+        }
+
+        // --- Modal Logic ---
+
+        function openStakeModal(assetId) {
+            const asset = assets.find(a => a.id === assetId);
+            if (!asset) return;
+            
+            selectedAsset = asset;
+            selectedLock = lockPeriods[0]; // Reset to flexible
+
+            // Reset UI
+            document.querySelectorAll('.lock-btn').forEach((b, i) => {
+                b.classList.toggle('active', i === 0);
+                const label = b.querySelector('.lock-label');
+                label.classList.toggle('text-white', i === 0);
+                label.classList.toggle('text-slate-500', i !== 0);
+            });
+
+            document.getElementById('modalTitle').innerText = asset.name;
+            document.getElementById('modalSymbol').innerText = asset.symbol;
+            document.getElementById('modalIcon').src = asset.icon;
+            document.getElementById('userBalance').innerText = asset.balance.toLocaleString() + ' ' + asset.symbol;
+            document.getElementById('inputSymbol').innerText = asset.symbol;
+            document.getElementById('baseApyDisplay').innerText = asset.baseApy + '%';
+            
+            stakeAmountInput.value = '';
+            document.getElementById('usdValue').innerText = '0.00';
+            termsCheck.checked = false;
+            
+            updateUnlockDate();
+            calculateRewards();
+            toggleConfirmButton();
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalBackdrop.classList.remove('opacity-0');
+                modalPanel.classList.remove('translate-y-full', 'md:translate-y-0', 'md:scale-95', 'opacity-0');
+                modalPanel.classList.add('md:scale-100');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeStakeModal() {
+            modalBackdrop.classList.add('opacity-0');
+            modalPanel.classList.add('translate-y-full', 'md:translate-y-0', 'md:scale-95', 'opacity-0');
+            modalPanel.classList.remove('md:scale-100');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        function setMaxAmount() {
+            if(!selectedAsset) return;
+            stakeAmountInput.value = selectedAsset.balance;
+            calculateRewards();
+        }
+
+        function calculateRewards() {
+            if(!selectedAsset || !selectedLock) return;
+            
+            const amount = parseFloat(stakeAmountInput.value) || 0;
+            const finalApy = selectedAsset.baseApy * selectedLock.multiplier;
+            
+            document.getElementById('modalApy').innerText = finalApy.toFixed(2) + '%';
+            
+            // USD Value
+            const usd = amount * selectedAsset.price;
+            document.getElementById('usdValue').innerText = usd.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+            // Rewards
+            const yearly = amount * (finalApy / 100);
+            const daily = yearly / 365;
+            const totalPeriod = daily * selectedLock.days;
+
+            const fmt = (n) => n.toLocaleString(undefined, {minimumFractionDigits: 4, maximumFractionDigits: 6});
+
+            document.getElementById('calcDays').innerText = selectedLock.label;
+            document.getElementById('periodLabel').innerText = selectedLock.label;
+            document.getElementById('dailyReward').innerText = fmt(daily) + ' ' + selectedAsset.symbol;
+            document.getElementById('totalPeriodReward').innerText = fmt(totalPeriod) + ' ' + selectedAsset.symbol;
+            document.getElementById('yearlyReward').innerText = fmt(yearly) + ' ' + selectedAsset.symbol;
+        }
+
+        function toggleConfirmButton() {
+            const amount = parseFloat(stakeAmountInput.value) || 0;
+            const isValid = amount > 0 && termsCheck.checked;
+            confirmBtn.disabled = !isValid;
+        }
+
+        function confirmStake() {
+            const amount = parseFloat(stakeAmountInput.value);
+            const originalBtnContent = confirmBtn.innerHTML;
+            
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = `<div class="loader"></div> Processing...`;
+
+            setTimeout(() => {
+                selectedAsset.balance -= amount;
+                const stakedValue = amount * selectedAsset.price;
+                userTotalStaked += stakedValue;
+                
+                confirmBtn.innerHTML = originalBtnContent;
+                confirmBtn.disabled = false;
+                
+                closeStakeModal();
+                showToast(`Staked ${amount} ${selectedAsset.symbol} for ${selectedLock.label}`);
+                updateStats();
+                renderAssets();
+            }, 1500);
+        }
+
+        // --- Utilities ---
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').innerText = message;
+            
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+
+        function animateValue(id, start, end, duration, isCurrency) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                
+                if(isCurrency) {
+                    obj.innerHTML = "$" + value.toLocaleString();
+                } else {
+                    obj.innerHTML = value;
+                }
+                
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+    </script>
+</body>
+</html>
+```
